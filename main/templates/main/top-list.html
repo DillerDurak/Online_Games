@@ -1,0 +1,16 @@
+{%extends 'main/base.html'%}
+
+{%block content%}
+<div class="wrapper">
+    <h1>Top users by rating</h1>
+    <ul>
+    {%for user in users%}
+
+        <li>{{user.username}} - {{user.rating}}</li>
+
+    {%endfor%}
+    </ul>
+</div>
+
+
+{%endblock%}

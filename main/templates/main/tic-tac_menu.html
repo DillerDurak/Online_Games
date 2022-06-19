@@ -1,0 +1,50 @@
+{% extends 'main/base.html' %}
+{% comment %} tic-tac_menu.html {% endcomment %}
+{%load static%}
+{% block content %}
+<div class="tic-tac">
+  <h1 class="main__title">Tic Tac Toe Game</h1>
+      <form method="POST" class="main-form">
+          {% csrf_token %}
+          <div class="main-form__avatar">
+              <div class="avatar__container">
+                  <span class="avatar__title">Choose your avatar</span>
+                  <div class="avatar__image">
+                      <img src="https://avatars.dicebear.com/api/miniavs/start.svg" id="avatar" alt="">
+                      <a type='click' class="avatar__btn" id="avatar-btn"></a>
+                  </div>
+              </div>
+          </div>
+
+          <div class="main-form__form">
+              {%if not request.user.is_authenticated%}
+              <div class='form-control'>
+                <label for="nick">Your nickname</label>
+                <input id="nick" type="text" name="nickname" required/>
+              </div>
+            {%endif%}
+        
+            <div class='form-control'>
+                <label for="room">Room id</label>
+                <input id="room" type="text" name="room_code" required />
+            </div>
+            <div class='form-control'>
+                <label for="character_choice">Your character</label>
+                <select for="character_choice" name = "character_choice">
+                <option value="X">X</option>
+                <option value="O">O</option>
+                </select>
+            </div>
+            <input type="submit" class="main-form__btn" value="Start Game" />
+          </div>
+
+          
+    </form>
+</div>
+
+
+{% endblock content %}
+
+{%block javascript%}
+<script src="{%static 'js/tic_toe_menu.js'%}"></script>
+{%endblock javascript%}

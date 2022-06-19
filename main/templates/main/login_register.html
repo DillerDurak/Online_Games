@@ -1,0 +1,45 @@
+{% extends 'main/base.html' %}
+{% comment %} login_register.html {% endcomment %}
+{% load static %}
+{% block content %}
+<div class="wrapper">
+    {%if request.path == '/login/'%}
+    <div class="login">
+        <h1>Login page</h1>
+
+        {{ form.non_field_errors }}
+        <form class='form' method='POST'>
+            {%csrf_token%}     
+            <div>
+                {%for f in form%}
+                    {{f.label}}
+                    {{f}}
+                {%endfor%}
+            </div>
+            <button class="form__btn" type='submit'>Login</button>
+        </form>
+        <p>Don't have an account? Sign-up <a href="{%url 'registration'%}">here</a></p>
+    </div>
+
+    {%else%}
+    <div class="registration">
+        <h1>Register page</h1>
+
+        <form class='form' method='POST'>
+            {%csrf_token%}
+            <div>
+                {%for f in form%}
+                    {{f.label}}
+                    {{f.errors}}
+                    {{f}}
+                {%endfor%}
+            </div>
+            <button class="form__btn" type='submit'>Sign-Up</button>
+        </form>
+        <p>Have an account? Login <a href="{%url 'login'%}">here</a></p>
+    </div>
+
+    {%endif%}
+</div>
+
+{%endblock%}

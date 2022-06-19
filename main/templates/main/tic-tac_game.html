@@ -1,0 +1,52 @@
+{% extends 'main/base.html' %}
+{% comment %} tic-tac_game.html {% endcomment %}
+{% load static %}
+{% block content %}
+
+<div class="tic-tac_game">
+    <div class="players">
+        <div class="first-player">
+            <img src="https://avatars.dicebear.com/api/miniavs/start.svg" id="p1_img" alt="">
+        </div>
+        <div class="player-info">
+            <div class="first-player__info">
+                <h3 id="p1_nick">Poper2</h3>
+                <h4 class="first-player__rank">Rank: 4355</h4>
+            </div>
+            
+            <span>VS</span>
+            <div class="second-player__info">
+                <h3 id="p2_nick">Poper2</h3>
+                <h4 class="first-player__rank">Rank: 4355</h4>
+            </div>
+        </div>
+        <div class="second-player">
+            <img src="https://avatars.dicebear.com/api/miniavs/sfart.svg" id="p2_img" alt="">
+        </div>
+    </div>
+    <div class="main-game">
+        <div class="main-game__head">
+            <h1 class="main-game__title">TIC TAC TOE</h1>
+            <h3>Welcome to room_{{room_code}}, {{nickname}}</h3>
+        </div>
+        <div id = "game_board" room_code = {{room_code}} char_choice = {{char_choice}} nickname={{nickname}}>
+            <div class="square" data-index = '0'></div>
+            <div class="square" data-index = '1'></div>
+            <div class="square" data-index = '2'></div>
+            <div class="square" data-index = '3'></div>
+            <div class="square" data-index = '4'></div>
+            <div class="square" data-index = '5'></div>
+            <div class="square" data-index = '6'></div>
+            <div class="square" data-index = '7'></div>
+            <div class="square" data-index = '8'></div>
+        </div>
+        <div id = "alert_move">Your turn. Place your move <strong>{{char_choice}}</strong></div>
+    
+    </div>
+</div>
+
+{% endblock content %}
+
+{%block javascript%}
+<script src="{%static 'js/tic_toe_game.js'%}"></script>
+{%endblock javascript%}
