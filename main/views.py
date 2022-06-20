@@ -15,21 +15,22 @@ def index(request):
     return render(request, 'main/index.html', context)
 
 def tic_tac_menu(request):
+    form = PlayerForm()
     if request.method == 'POST':
+        form = PlayerForm(request.POST)
         room_code = request.POST.get('room_code')
-        char_choice = request.POST.get('character_choice')
-        # print('processing')
-        # res = requests.get('http://127.0.0.1:8000/api/v1/game/add-image')
-        # json '= res.json()
-        # image = 'lol'
-        # print(image, ' view')
+        game, created = Game.objects.get_or_create(name=room_code)
+        char_choice = form.cleaned_data['choice']
+
         if request.user.is_authenticated:
             nickname = request.user.username
         else:
-            nickname = request.POST.get('nickname')
-               
+            nickname = form.cleaned_data['nickname']
+        
+        player = Player.objects.create(nickname=nickname, choice=char_choice)
+        
 
-        return redirect('play/%s?&choice=%s&nickname=%s'%(room_code, char_choice, nickname))
+        return redirect('play/%s'%(room_code))
     return render(request, 'main/tic-tac_menu.html', {})
 
 
@@ -85,5 +86,7 @@ def topUsersView(request):
     return render(request, 'main/top-list.html', context)
 
 
-# def chat(request):
+def pixelBattle(request):
+    context= {}
+    return render(request, 'main/canvas.html', context)
     

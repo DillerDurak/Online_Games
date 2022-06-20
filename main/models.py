@@ -53,8 +53,7 @@ class Player(models.Model):
 
 class Game(models.Model):
     name = models.CharField(max_length=30, unique=True)
-    player1 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='player1')
-    player2 = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='player2')
+    player = models.ManyToManyField(Player, related_name='player', blank=True)
 
     def __str__(self):
         return self.name

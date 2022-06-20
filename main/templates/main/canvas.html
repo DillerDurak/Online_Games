@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <script type="application/javascript">
+    window.addEventListener('load', ()=>{
+        const canvas = document.querySelector('#canvas');
+        canvas.width = 1000;
+        canvas.height = 600;
+        // window.addEventListener('resize', ()=>{
+        //     canvas.width = window.innerWidth-15;
+        //     canvas.height = window.innerHeight-15;
+        // })
+        let ctx = canvas.getContext('2d');
+        let painting = false;
+
+        var connectionString = 'ws://' + window.location.host + '/ws/pixel-battle/';
+        const gameSocket = new WebSocket(connectionString);
+
+        gameSocket.onopen = function open() {
+            console.log('WebSockets connection created.');
+        // on websocket open, send the START event.
+        };
+
+
+        function startPosition(x, y){
+            painting = true;
+            draw(x, y)
+        }
+
+        function finishedPosition(){
+            painting = false;
+            ctx.beginPath();
+        }
+
+        function draw(x,y){
+            if (!painting) return;
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round'
+            ctx.lineTo(x, y)
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x,y);
+
+        }
+
+        gameSocket.onmessage = function (e) {
+                let data = JSON.parse(e.data);
+                data = data["payload"];
+                let positionX = data['positionX'];
+                let positionY = data["positionY"];
+                let event = data['event']
+                if (event ==='END'){
+                    finishedPosition()  
+                }
+                else if(event === 'MOVING'){
+                    draw(positionX,positionY)
+                }
+                else if(event === 'START'){
+                    startPosition(positionX,positionY)
+                }                        
+            }
+        canvas.addEventListener('mousedown', (e)=>{
+            gameSocket.send(JSON.stringify({
+                'positionX': e.clientX,
+                'positionY': e.clientY,
+                'event': 'START'
+            }))
+        })
+
+        canvas.addEventListener('mousemove', (e)=>{
+            if(!painting) return;
+            gameSocket.send(JSON.stringify({
+                'positionX': e.clientX,
+                'positionY': e.clientY,
+                'event': 'MOVING'
+            }))
+        })
+
+        canvas.addEventListener('mouseup', (e)=>{
+            gameSocket.send(JSON.stringify({
+                'positionX': e.clientX,
+                'positionY': e.clientY,
+                'event': 'END'
+            }))     
+        });
+        
+
+    })
+
+  </script>
+  <style type="text/css">
+    body{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    #canvas{
+        border: 5px solid black;
+    }
+  </style>
+ </head>
+ <body>
+   <canvas id="canvas"></canvas>
+
+ </body>
+</html>

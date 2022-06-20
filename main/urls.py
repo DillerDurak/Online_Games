@@ -9,4 +9,5 @@ urlpatterns = [
     path('logout/', userLogout, name='logout'),
     path('tic-tac/play/<room_code>', tic_tac_game, name='tic-tac_game'),
     path('top-list/', topUsersView, name='top-list'),
+    path('pixel-battle/', pixelBattle, name='pixel-battle')
 ]
