@@ -8,35 +8,14 @@ var img1 = document.querySelector('#p1_img');
 var img2 = document.querySelector('#p2_img');
 var nick_1 = document.querySelector('#p1_nick');
 var nick_2 = document.querySelector('#p2_nick');
-var urlImg = 'http://' + window.location.host + '/api/v1/game/add-image/'
 
-fetch(urlImg)
-.then(response => response.json())
-.then(data => {
-    let image = data['image']
-    let count = data['count']
-    let nickname = data['nickname']
-    console.log(count)
-    console.log(nickname)
-    if (count%2==0){
-        img2.src = image
-        nick_2.textContent = nickname
-        console.log('Player2 - ' + image)
-    }
-    else{
-        img1.src = image
-        nick_1.textContent = nickname
-        console.log('Player1 - ' + image)
-    }
-
-})
-.catch(error => console.log(error))
 
 var connectionString = 'ws://' + window.location.host + '/ws/tic-tac/play/' + roomCode + '/';
 const gameSocket = new WebSocket(connectionString);
 // Game board for maintaing the state of the game
 
 connect();
+
 
 
 function getCookie(name) {
@@ -55,6 +34,24 @@ function getCookie(name) {
 }
 let csrftoken = getCookie('csrftoken');
 
+fetch('http://' + window.location.host + '/api/v1/game/add-user/', {
+    method: 'POST',
+    body: JSON.stringify({
+        'room_code': roomCode,
+    }),
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
+    }
+})
+.then(response => response.json())
+.then(data => {
+    console.log(data)
+    img1.src = data['player_1']
+    img2.src = data['player_2']
+    console.log(data['player_1'], data['player_2'])
+})
+.catch(error => console.log('error: ', error))
 
 function addRating(nickname){
     data = JSON.stringify({
@@ -144,12 +141,21 @@ function make_move(index, player, nickname){
     if(myturn){
         // if player winner, send the END event.
         if(win){
+            image = '';
+            if (nickname === nick_1.textContent){
+                image = img1.src
+            }
+            else if (nickname === nick_2.textContent){
+                image = img2.src
+            }
             data = {
                 "event": "END",
                 "message": `${nickname} is a winner. Play again?`,
-                'winner': nickname
+                'winner': nickname,
+                'image': image
             }
-            addRating(nickname);
+            addRating(nickname)
+            
 
             gameSocket.send(JSON.stringify(data))
             
@@ -221,6 +227,7 @@ function connect() {
             connect();
         }, 1000);
     };
+
     // Sending the info about the room
     gameSocket.onmessage = function (e) {
         // On getting the message from the server
@@ -229,13 +236,31 @@ function connect() {
         data = data["payload"];
         let message = data['message'];
         let event = data["event"];
+        let winner = data['winner'];
+        let image = data['image'];
         switch (event) {
             case "START":
                 reset();
                 alert('started')
                 break;
             case "END":
-                alert(message);
+                // alert(message);
+                document.querySelector('#winner').textContent = `Winner is ${winner}`
+                document.querySelector('#winner-avatar').src = image
+
+                if (winner === nick_1.textContent){
+                    document.querySelector('.popup__body').style.backgroundColor = 'rgb(134, 134, 206)'
+                }
+                else{
+                    document.querySelector('.popup__body').style.backgroundColor = 'rgb(202, 120, 114)'
+                }
+
+                document.querySelector('#popup').classList.add('active')
+
+                setTimeout(()=>{
+                    document.querySelector('#popup').classList.remove('active')
+                }, 3000);
+
                 reset();
                 break;
             case "MOVE":
@@ -256,4 +281,23 @@ function connect() {
     }
 }
 
+window.addEventListener('beforeunload', ()=>{
+
+    data = JSON.stringify({
+        'nickname': document.querySelector('#user_username').textContent
+    })
+    fetch('http://'+window.location.host + '/api/v1/game/delete-user/', {
+        method: 'POST',
+        body: data,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        }
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.log('error: ', error))
+    
+
+})
 //call the connect function at the start.

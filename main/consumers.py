@@ -30,6 +30,8 @@ class TicTacToeConsumer(AsyncJsonWebsocketConsumer):
         response = json.loads(text_data)
         event = response.get("event", None)
         message = response.get("message", None)
+        winner = response.get('winner', None)
+        image = response.get('image', None)
 
         if event == 'MOVE':
             # Send message to room group
@@ -54,6 +56,8 @@ class TicTacToeConsumer(AsyncJsonWebsocketConsumer):
                 'type': 'send_message',
                 'message': message,
                 'event': "END",
+                'winner': winner,
+                'image': image
             })
             
 
@@ -93,14 +97,15 @@ class PixelBattleConsumer(AsyncJsonWebsocketConsumer):
         positionX = response.get("positionX", None)
         positionY = response.get("positionY", None)
         event = response.get('event', None)
-        print(positionX,positionY, event)
+        color = response.get('color')
 
         # Send message to room group
         await self.channel_layer.group_send(self.room_group_name, {
             'type': 'send_message',
             'event': event,
             'positionX': positionX,
-            "positionY": positionY
+            "positionY": positionY,
+            'color': color,
         })
 
             

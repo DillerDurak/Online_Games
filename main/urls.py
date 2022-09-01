@@ -7,7 +7,8 @@ urlpatterns = [
     path('login/', userLogin, name='login'),
     path('registration/', userRegistration, name='registration'),
     path('logout/', userLogout, name='logout'),
-    path('tic-tac/play/<room_code>', tic_tac_game, name='tic-tac_game'),
+    path('tic-tac/play/<str:room_code>', tic_tac_game, name='tic-tac_game'),
     path('top-list/', topUsersView, name='top-list'),
-    path('pixel-battle/', pixelBattle, name='pixel-battle')
+    path('pixel-battle/', pixelBattle, name='pixel-battle'),
+    path('draw-battle/', drawBattle, name='draw-battle'),
 ]

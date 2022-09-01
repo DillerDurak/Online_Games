@@ -6,30 +6,48 @@
 <div class="tic-tac_game">
     <div class="players">
         <div class="first-player">
-            <img src="https://avatars.dicebear.com/api/miniavs/start.svg" id="p1_img" alt="">
+            {%if player_1%}
+                <img src="{{player_1.image}}" id="p1_img" alt="">
+            {%else%}
+                <img src="https://avatars.dicebear.com/api/miniavs/start.svg" id="avatar" alt="">
+            {%endif%}
         </div>
         <div class="player-info">
             <div class="first-player__info">
-                <h3 id="p1_nick">Poper2</h3>
-                <h4 class="first-player__rank">Rank: 4355</h4>
+                {%if player_1%}
+                    <h3 id="p1_nick">{{player_1.nickname}}</h3>
+                    <h4 class="first-player__rank">{{player_1.rating}}</h4>
+                {%else%}
+                    <h3 id="p2_nick">None</h3>
+                    <h4 class="first-player__rank">Unranked</h4>
+                {%endif%}
             </div>
             
             <span>VS</span>
             <div class="second-player__info">
-                <h3 id="p2_nick">Poper2</h3>
-                <h4 class="first-player__rank">Rank: 4355</h4>
+                {%if player_2%}
+                    <h3 id="p2_nick">{{player_2.nickname}}</h3>
+                    <h4 class="first-player__rank">{{player_2.rating}}</h4>
+                {%else%}
+                    <h3 id="p2_nick">None</h3>
+                    <h4 class="first-player__rank">Unranked</h4>
+                {%endif%}
             </div>
         </div>
         <div class="second-player">
-            <img src="https://avatars.dicebear.com/api/miniavs/sfart.svg" id="p2_img" alt="">
+            {%if player_2%}
+                <img src="{{player_2.image}}" id="p2_img" alt="">
+            {%else%}
+                <img src="https://avatars.dicebear.com/api/miniavs/start.svg" id="avatar" alt="">
+            {%endif%}
         </div>
     </div>
     <div class="main-game">
         <div class="main-game__head">
             <h1 class="main-game__title">TIC TAC TOE</h1>
-            <h3>Welcome to room_{{room_code}}, {{nickname}}</h3>
+            <h3>Welcome to room_{{room_code}}, <span id='user_username'>{{nickname}}</span></h3>
         </div>
-        <div id = "game_board" room_code = {{room_code}} char_choice = {{char_choice}} nickname={{nickname}}>
+        <div id = "game_board" room_code = {{room_code}} char_choice = {{choice}} nickname={{nickname}}>
             <div class="square" data-index = '0'></div>
             <div class="square" data-index = '1'></div>
             <div class="square" data-index = '2'></div>
@@ -40,9 +58,18 @@
             <div class="square" data-index = '7'></div>
             <div class="square" data-index = '8'></div>
         </div>
-        <div id = "alert_move">Your turn. Place your move <strong>{{char_choice}}</strong></div>
+        <div id = "alert_move">Your turn. Place your move <strong>{{choice}}</strong></div>
     
     </div>
+
+    <div id="popup" class="popup">
+        <div class="popup__body">
+            <span id="winner"></span>
+            <img src="" alt="" id="winner-avatar">
+        </div>
+    </div>
+
+
 </div>
 
 {% endblock content %}

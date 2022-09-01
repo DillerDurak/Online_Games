@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw battle</title>
+</head>
+<script type="text/javascript">
+    window.addEventListener('load', ()=>{
+        const canvas = document.querySelector('#canvas');
+
+        canvas.width = 800;
+        canvas.height = 600;
+        let ctx = canvas.getContext('2d');
+        let painting = false;
+
+    
+            // Update the count down every 1 second
+        var countDownDate = new Date().getTime() + 1000*60;
+
+        var x = setInterval(function() {
+            var now = new Date().getTime();
+            // Find the distance between now and the count down date
+            var distance = countDownDate - now;
+
+            // Time calculations for days, hours, minutes and seconds
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display the result in the element with id="demo"
+            document.getElementById("time").innerHTML = minutes + "m " + seconds + "s ";
+
+            // If the count down is finished, write some text
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("time").innerHTML = "EXPIRED";
+                if (window.navigator.msSaveBlob){
+                    window.navigator.msSaveBlob(canvas.msToBlob(), 'canvas-image.png')
+                } else{
+                    const a = document.createElement('a');
+                    document.body.appendChild(a);
+                    a.href = canvas.toDataURL();
+                    a.download = 'canvas-image.png';
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            }
+        }, 1000);
+
+
+        function startPosition(x, y){
+            painting = true;
+            draw(x, y)
+        }
+
+        function finishedPosition(){
+            painting = false;
+            ctx.beginPath();
+        }
+
+        function draw(x,y){
+            if (!painting) return;
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round'
+            ctx.lineTo(x, y)
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x,y);
+        }
+
+        canvas.addEventListener('mousedown', (e)=>{
+            startPosition(e.clientX,e.clientY);
+        })
+
+        canvas.addEventListener('mousemove', (e)=>{
+            if(!painting) return;
+            draw(e.clientX,e.clientY);
+        })
+
+        canvas.addEventListener('mouseup', (e)=>{
+            finishedPosition();     
+        });
+
+    })
+
+    window.addEventListener('beforeunload', (e)=>{
+        e.preventDefault();
+        return e.returnValue = 'Are you sure want to exit?'
+        // let choice = confirm('If you leave, you will lose all your score')
+        // if (choice){
+        //     e.preventDefault();
+        // }
+    })
+
+
+
+</script>
+<style type="text/css">
+    #canvas{
+        border: 2px solid black;
+    }
+</style>
+<body>
+    <canvas id="canvas"></canvas>
+    <p id="time"></p>
+</body>
+</html>

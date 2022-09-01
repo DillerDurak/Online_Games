@@ -1,34 +1,28 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from main.models import User, Rank, Player
+from main.models import *
 from .serializers import UserSerializer
 from rest_framework.decorators import api_view
 import requests
 from random import randint
+from django.db.models import Q
 
-dataList = {'image': '', 'nickname': '', 'count': 0}
-count = 0
-
-def fillData(image, nickname, count):
-    global dataList
-    dataList = {'image': image, 'nickname': nickname, 'count': count}
-    print(dataList)
+from main.models import *
 
 
-@api_view(['POST', 'GET'])
-def add_image(request): 
-    global dataList
-    global count 
-    if request.method == 'POST':
-        data = request.data
-        image = data.get('image', None)
-        nickname = data.get('nickname', None)
-        print(image, ' get post from fetch', nickname)
-        count += 1 
-        fillData(image, nickname, count)   
-    else:
-        return JsonResponse(dataList)
-    return JsonResponse({'OK': '200'})
+@api_view(['POST'])
+def add_user(request): 
+    data = request.data
+    room_code = data['room_code']
+    game = Game_tic.objects.get(name=room_code)
+    try:
+        player1 = Player_tic.objects.filter(player__name=game.name).get(choice='X')
+        player2 = Player_tic.objects.filter(player__name=game.name).get(choice='O')
+        return JsonResponse({'player_1': player1.image, 'player_2': player2.image})
+    except:
+        player1 = Player_tic.objects.get(player__name=game.name)
+        return JsonResponse({'player_1': player1.image})
+
 
 @api_view(['POST'])
 def add_rating(request):
@@ -47,3 +41,23 @@ def add_rating(request):
 
     user.save()
     return JsonResponse({'message': f'added 20 points to {user.username}'})
+
+
+@api_view(['POST'])
+def delete_user(request):
+    data = request.data
+    nickname = data.get('nickname')
+    player = Player_tic.objects.get(nickname=nickname)
+    game = Game_tic.objects.get(player__nickname=player.nickname)
+    player.delete()
+    print('deleted:', nickname, 'game:', game.name)
+    if game.player.count() == 0:
+        game.delete()
+        print(game.name, ' - deleted')
+    
+    response = JsonResponse({'Action': 'User deleted'})
+    response.delete_cookie('char_choice')
+    response.delete_cookie('nickname')
+    response.delete_cookie('image')
+
+    return response

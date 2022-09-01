@@ -19,7 +19,8 @@
             <nav class="nav">
                 <a href="{%url 'tic-tac_menu'%}" class="nav-item">Tic Tac Toe Game</a>
                 <a href="{%url 'top-list'%}" class="nav-item">Top users</a>
-                <a href="#" class="nav-item">Something</a>
+                <a href="{%url 'pixel-battle'%}" class="nav-item">Pixel battle</a>
+                <a href="{%url 'draw-battle'%}" class="nav-item">Draw battle</a>
             </nav>
 
             {%if request.user.is_authenticated%}

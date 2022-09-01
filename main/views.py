@@ -1,13 +1,11 @@
 from django.shortcuts import render, redirect
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.contrib.auth import logout, login, authenticate
 from django.urls import reverse_lazy
 from .models import *
 from .forms import *
 from django.contrib.auth.decorators import login_required
-import secrets
-import requests
-import json
+from django.views import generic
 
 
 def index(request):
@@ -15,32 +13,55 @@ def index(request):
     return render(request, 'main/index.html', context)
 
 def tic_tac_menu(request):
-    form = PlayerForm()
     if request.method == 'POST':
-        form = PlayerForm(request.POST)
+
         room_code = request.POST.get('room_code')
-        game, created = Game.objects.get_or_create(name=room_code)
-        char_choice = form.cleaned_data['choice']
+        game,created = Game_tic.objects.get_or_create(name=room_code)
+
+        image = request.POST.get('image')
+        choice = request.POST.get('character_choice')
 
         if request.user.is_authenticated:
             nickname = request.user.username
+            rating = request.user.rating
         else:
-            nickname = form.cleaned_data['nickname']
-        
-        player = Player.objects.create(nickname=nickname, choice=char_choice)
-        
+            nickname = request.POST.get('nickname')
+            rating = 0
 
-        return redirect('play/%s'%(room_code))
+        print('room_code: ', room_code, 'image: ', image, 'choice: ', choice, 'nickname: ', nickname, 'rating', rating)
+        player_to_add = Player_tic(nickname=nickname, choice=choice, image=image, rating=rating)
+        player_to_add.save()
+        game.player.add(player_to_add)
+        response = redirect('play/%s'%(room_code))
+        print(f'{player_to_add.nickname} added to {game.name}.')
+        response.set_cookie('nickname', nickname)
+        response.set_cookie('char_choice', choice)
+        response.set_cookie('image', image)
+
+        return response
+
     return render(request, 'main/tic-tac_menu.html', {})
 
 
 def tic_tac_game(request, room_code):
-    choice = request.GET.get('choice')
-    nickname = request.GET.get('nickname')
-    img = request.GET.get('img')
-    if choice not in ['X', 'O']:
-        raise Http404('Choice does not exist')
-    context = {'char_choice': choice, 'room_code': room_code, 'nickname': nickname, 'img': img}
+    game = Game_tic.objects.get(name=room_code)
+    print('name: ', game.name)
+    players = game.player.all()
+    print(players.values('nickname'))
+    try:
+        player_1 = players.get(choice='X')
+    except:
+        player_1 = False
+    try:    
+        player_2 = players.get(choice='O')
+    except:
+        player_2 = False
+    
+    choice = request.COOKIES.get('char_choice')
+    nickname = request.COOKIES.get('nickname')
+    
+
+    context = {'room_code': room_code, 'player_1': player_1, 'player_2': player_2, 'game': game, 'choice': choice, 'nickname': nickname}
 
     return render(request, 'main/tic-tac_game.html', context)
 
@@ -89,4 +110,9 @@ def topUsersView(request):
 def pixelBattle(request):
     context= {}
     return render(request, 'main/canvas.html', context)
+
+
+def drawBattle(request):
+    context = {}
+    return render(request, 'main/draw_battle.html', context)
     

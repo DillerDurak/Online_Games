@@ -439,6 +439,40 @@ input, select{
     background: grey;
 }
 
+.popup{
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.7);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.popup__body{
+    /* display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around; */
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    width: 600px;
+    max-width: 100%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0,4);
+}
+
+.popup.active{
+    opacity: 1;
+    pointer-events: auto;
+}
+
 @media only screen and (max-width:780px){
     .first-player, .second-player{
         position: absolute;

@@ -4,6 +4,10 @@
   <meta charset="utf-8"/>
   <script type="application/javascript">
     window.addEventListener('load', ()=>{
+        const redBtn = document.querySelector('#red');
+        const greenBtn = document.querySelector('#green');
+        const blueBtn = document.querySelector('#blue');
+        const resetBtn = document.querySelector('#reset');
         const canvas = document.querySelector('#canvas');
         canvas.width = 1000;
         canvas.height = 600;
@@ -13,6 +17,7 @@
         // })
         let ctx = canvas.getContext('2d');
         let painting = false;
+        let color = 'black'
 
         var connectionString = 'ws://' + window.location.host + '/ws/pixel-battle/';
         const gameSocket = new WebSocket(connectionString);
@@ -22,10 +27,13 @@
         // on websocket open, send the START event.
         };
 
+        function changeColor(color2){
+            color = color2;
+        }
 
-        function startPosition(x, y){
+        function startPosition(x, y, color){
             painting = true;
-            draw(x, y)
+            draw(x, y, color)
         }
 
         function finishedPosition(){
@@ -33,9 +41,10 @@
             ctx.beginPath();
         }
 
-        function draw(x,y){
+        function draw(x,y, color){
             if (!painting) return;
             ctx.lineWidth = 5;
+            ctx.strokeStyle = color;
             ctx.lineCap = 'round'
             ctx.lineTo(x, y)
             ctx.stroke();
@@ -49,22 +58,28 @@
                 data = data["payload"];
                 let positionX = data['positionX'];
                 let positionY = data["positionY"];
-                let event = data['event']
+                let event = data['event'];
+                let color = data['color'];
+              
                 if (event ==='END'){
-                    finishedPosition()  
+                    finishedPosition();
                 }
-                else if(event === 'MOVING'){
-                    draw(positionX,positionY)
+                else if(event === 'MOVING'){  
+                    draw(positionX,positionY, color);
                 }
                 else if(event === 'START'){
-                    startPosition(positionX,positionY)
-                }                        
+                    startPosition(positionX,positionY, color);
+                }     
+                else if(event === 'changeColor'){
+                    changeColor(color);
+                }                
             }
         canvas.addEventListener('mousedown', (e)=>{
             gameSocket.send(JSON.stringify({
                 'positionX': e.clientX,
                 'positionY': e.clientY,
-                'event': 'START'
+                'event': 'START',
+                'color': color,
             }))
         })
 
@@ -73,7 +88,8 @@
             gameSocket.send(JSON.stringify({
                 'positionX': e.clientX,
                 'positionY': e.clientY,
-                'event': 'MOVING'
+                'event': 'MOVING',
+                'color': color,
             }))
         })
 
@@ -81,9 +97,32 @@
             gameSocket.send(JSON.stringify({
                 'positionX': e.clientX,
                 'positionY': e.clientY,
-                'event': 'END'
+                'event': 'END',
+                'color': color,
             }))     
         });
+//zdes
+        redBtn.addEventListener('click', ()=>{
+            gameSocket.send(JSON.stringify({
+                'event': 'changeColor',
+                'color': 'red',
+            })) 
+        })
+        greenBtn.addEventListener('click', ()=>{
+            gameSocket.send(JSON.stringify({
+                'event': 'changeColor',
+                'color': 'green',
+            })) 
+        })
+        blueBtn.addEventListener('click', ()=>{
+            gameSocket.send(JSON.stringify({
+                'event': 'changeColor',
+                'color': 'blue',
+            })) 
+        })
+        resetBtn.addEventListener('click', ()=>{
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        })
         
 
     })
@@ -98,10 +137,30 @@
     #canvas{
         border: 5px solid black;
     }
+    button, #red, #green, #blue{
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 2px solid black;
+        cursor: pointer;
+    }
+    #red{
+        background-color: red;
+    }
+    #green{
+        background-color: green;
+    }
+    #blue{
+        background-color: blue;
+    }
   </style>
  </head>
  <body>
    <canvas id="canvas"></canvas>
-
+   <h2>Select color</h2>
+    <button id="red" type="click">Red</button>
+    <button id="green" type="click">Green</button>
+    <button id="blue" type="click">Blue</button>
+    <button id='reset' type="click">Reset</button>
  </body>
 </html>

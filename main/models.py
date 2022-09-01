@@ -37,13 +37,13 @@ class Rank(models.Model):
         return self.title
 
 
-class Player(models.Model):
+class Player_tic(models.Model):
     CHOICES = (
         ('X', 'X'),
         ('O', 'O')
     )
     nickname = models.CharField(max_length=100, unique=True)
-    # code = models.CharField(max_length=100, unique=True, default='')
+    rating = models.IntegerField(blank=True, null=True)
     image = models.CharField(max_length=120, blank=True, null=True)
     choice = models.CharField(choices=CHOICES, max_length=1, default='X')
 
@@ -51,9 +51,11 @@ class Player(models.Model):
         return self.nickname
 
 
-class Game(models.Model):
+
+
+class Game_tic(models.Model):
     name = models.CharField(max_length=30, unique=True)
-    player = models.ManyToManyField(Player, related_name='player', blank=True)
+    player = models.ManyToManyField(Player_tic, related_name='player', blank=True)
 
     def __str__(self):
         return self.name

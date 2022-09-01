@@ -19,5 +19,5 @@ class PlayerForm(forms.ModelForm):
     nickname = forms.CharField(label='Nickname', widget=forms.TextInput(attrs={'id':"nick"}))
     choice = forms.CharField(label='Your character')
     class Meta:
-        model = Player
+        model = Player_tic
         fields = ('nickname', 'choice')
