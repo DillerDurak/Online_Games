@@ -58,7 +58,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'mywebsite.urls'
+ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
     {
@@ -76,7 +76,7 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'mywebsite.asgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
 
 CHANNEL_LAYERS = {
     'default':{
@@ -86,7 +86,7 @@ CHANNEL_LAYERS = {
 
 AUTH_USER_MODEL = 'main.User'
 
-# WSGI_APPLICATION = 'mywebsite.wsgi.application'
+# WSGI_APPLICATION = 'core.wsgi.application'
 
 
 # Database
@@ -101,7 +101,7 @@ DATABASES = {
         'HOST': 'ec2-52-30-67-143.eu-west-1.compute.amazonaws.com',
         'PORT': '5432',
     },
-    'extra':{
+    'extra': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }

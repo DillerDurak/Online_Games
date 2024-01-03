@@ -15,7 +15,7 @@ from channels.auth import AuthMiddlewareStack
 import main.routing
 from channels.http import AsgiHandler
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mywebsite.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
 
 application = ProtocolTypeRouter({
