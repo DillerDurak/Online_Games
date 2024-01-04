@@ -2,7 +2,7 @@
 const avatar = document.getElementById('avatar');
 const avatarBtn = document.getElementById('avatar-btn');
 const avatarInput = document.getElementById('avatar-input');
-const url = 'https://avatars.dicebear.com/api/miniavs/';
+const url = 'https://api.dicebear.com/7.x/miniavs/svg?seed=';
 let avatarURL = '';
 
 function getRandomInt(min, max) {
@@ -24,7 +24,7 @@ function getRandomStr(length){
 
 avatarBtn.addEventListener('click', ()=>{
     let randomInt = getRandomInt(1,20);
-    let string = getRandomStr(randomInt) + '.svg';
+    let string = getRandomStr(randomInt);
     let url2 = url + string;
     avatar.src = url2;
     avatarInput.value = url2;

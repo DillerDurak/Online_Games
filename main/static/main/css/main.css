@@ -254,7 +254,7 @@ a{
     bottom: 0;
     right: 0;
     border: 3px solid #118b4a;
-    background: url('/static/img/repeat.svg');
+    background: url('/static/main/img/repeat.svg');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

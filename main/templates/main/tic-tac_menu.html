@@ -10,7 +10,7 @@
               <div class="avatar__container">
                   <span class="avatar__title">Choose your avatar</span>
                   <div class="avatar__image">
-                      <img src="https://avatars.dicebear.com/api/miniavs/start.svg" id="avatar" alt="">
+                      <img src="https://api.dicebear.com/7.x/miniavs/svg?seed=start" id="avatar" alt="">
                       <a type='click' class="avatar__btn" id="avatar-btn"></a>
                   </div>
               </div>
@@ -47,5 +47,5 @@
 {% endblock content %}
 
 {%block javascript%}
-<script src="{%static 'js/tic_toe_menu.js'%}"></script>
+<script src="{%static 'main/js/tic_toe_menu.js'%}"></script>
 {%endblock javascript%}
